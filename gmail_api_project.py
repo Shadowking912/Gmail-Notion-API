@@ -107,13 +107,17 @@ def readmail(query,z):
             msg = service.users().messages().get(userId='me',id=message['id'],format="full",metadataHeaders=None).execute()
             snippet=msg["snippet"]
             headers=msg["payload"]["headers"]
+            print(snippet)
             for i in headers:
                 if i["name"]=="Subject":
-                    subject=i['value']
-                    break  
+                    subject=i['value'] 
                 elif i["name"]=="Date":
                     date=i["value"]
-            d[subject]={"date":date,"body":snippet}  
+            if(subject not in d):
+                d[subject]={"date":date,"body":snippet}
+            else:
+                d[subject]["body"]=d[subject]["body"]+"\n"+snippet 
+        print(d) 
         createNotion(d)  
 
 def main():
