@@ -10,6 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 from mimetypes import guess_type as guess_mime_type
 from tkinter import filedialog
+import tkinter as tk
 
 
 SCOPES = ['https://mail.google.com/']
@@ -71,10 +72,17 @@ def build_message(destination, obj, body, attachments=[]):
         return {'raw': urlsafe_b64encode(message.as_bytes()).decode()}
 
 def send_message():
-    t=filedialog.askopenfilename(initialdir="/", title="Select message file",filetypes=(("txt files", "*.txt"),))
-    with open(t,"r") as f:
-        body=f.read()
+    root = tk.Tk()
+    try:
+        t=filedialog.askopenfilename(parent=root,title="Select message file",filetypes=(("txt files", "*.txt"),))
+        root.destroy()
+        with open(t,"r") as f:
+            body=f.read()
+    except:
+        return
+    root=tk.Tk()
     attachments = filedialog.askopenfilenames(initialdir="/", title="Select attachment",filetypes=(("txt files", "*.txt"),("all files", "*.*")))
+    root.destroy()
     obj=input("enter subject: ")
     destination=input("enter destination email: ")
     return service.users().messages().send(userId="me",body=build_message(destination, obj, body, attachments)).execute()
