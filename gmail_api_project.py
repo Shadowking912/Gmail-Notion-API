@@ -101,13 +101,12 @@ def readmail(query,z):
     if not messages:
         print("No messages found.")
     else:
-        print("Message snippets:")
+        print("adding messages to notion")
         d={}
         for message in messages:
             msg = service.users().messages().get(userId='me',id=message['id'],format="full",metadataHeaders=None).execute()
             snippet=msg["snippet"]
             headers=msg["payload"]["headers"]
-            print(snippet)
             for i in headers:
                 if i["name"]=="Subject":
                     subject=i['value'] 
@@ -117,7 +116,6 @@ def readmail(query,z):
                 d[subject]={"date":date,"body":snippet}
             else:
                 d[subject]["body"]=d[subject]["body"]+"\n"+snippet 
-        print(d) 
         createNotion(d)  
 
 def main():
